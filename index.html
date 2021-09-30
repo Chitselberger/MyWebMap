@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8 />
+	<title>Map Template Browser Title</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: "whitesmoke";
+			font-family: "Noto Sans", sans-serif;
+			color: "#3d3d3d";
+		}
+
+		h1 {
+			position: absolute;
+			margin-top: 0;
+			top: 30px;
+			left: 60px;
+			font-size: 1.65em;
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+			padding: 10px 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		h2 {
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		section {
+			position: absolute;
+			bottom: 0px;
+			left: 10px;
+			width: 340px;
+			margin: 15px auto;
+			padding: 0 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		p {
+			font-size: .9em;
+			line-height: 1.5em;
+		}
+
+		a {
+			color: "#005daa";
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Route from my neighborhood to my friends neighborhood via the greenway in Matthews, NC.</h1>
+
+	<div id='map'> </div>
+
+	<section>
+		<h2>About this map</h2> <!---create hyperlink to markdown writeup-->
+
+		<p>Matthews, NC is a suburb in Southeast Charlotte and my hometown. The Four Mile Creek Greenway path in the town has been developed over the course of the past decade and is located right by my house, so I went to it often growing up. more information about the greenway is provided by the Mecklenburg County <a href = "https://www.mecknc.gov/ParkandRec/Parks/Greenways/OpenGreenways/Pages/FourMileCreekGreenway-Matthews.aspx"> website. </a></p> <!---insert hyperlink to image-->
+
+		<p> Matthews is a historic town and was known by many names such as 'Stumptown' and 'Fullwood' before officially becoming the Town of Matthews in 1879. Read more about Matthews' history <a href = "https://www.matthewsnc.gov/pview.aspx?id=20691&catid=0">here!</a> </p> <!---insert hyperlink to matthews history website-->
+
+		<p> My house is in a neighborhood directly across the street from <a href = "https://bestofmatthews.com/listing/squirrel-lake-park-matthews-nc/"> Squirrel Lake Park. </a> The park used to be very tiny and undeveloped but it grew along with the greenway and is now nicer than ever! along with the greenway connector the park also has smaller walking and biking trails, a disc golf course, cornhole, restrooms, playgrounds, outdoor grill areas, picnic tables, two gazebo shelters and a pond with a fishing pier. </p> <!--- hyperlink image to the word image--->
+
+<!--		<p>Text provided by <a href="https://www.bobrosslipsum.com">Bob Ross quotes</a></p> -->
+		<p>Map Authored By <a href = "https://73chits.wixsite.com/chris-hitselberger"> Chris Hitselberger </a> </p>
+
+	</section>
+
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+	<script src="data/route.js"></script> <!---our data loaded here-->
+	<script>
+
+//options to be used when creating the map
+		var options = {
+			center: [35.09993, -80.72309],
+			zoom: 16
+		}
+
+		console.log(data); //output is GeoJSON
+
+//creation of the Leaflet map
+		var map = L.map('map', options);
+
+//request to load basemap
+//var Thunderforest_Landscape = L.tileLayer('https://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey={apikey}', {
+//	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+//	apikey: '<your apikey>',
+//	maxZoom: 20
+//	}).addTo(map);
+
+	var OpenStreetMap_France = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+		maxZoom: 20,
+		attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+	}).addTo(map);
+
+//string content to be inserted into a tooltip
+
+		var message = 'My halfway point at Squirrel Lake Park!';
+
+//create a Leaflet marker, centered on the map's center.
+//		L.marker(map.getCenter())
+//			.bindTooltip(message); //bind the tooltip and message to the marker
+//			.addTo(map); // add the marker to the map`
+//			.openTooltip(); // open the tooltip
+
+		var myRoute = L.geoJSON(data).addTo(map);
+		map.fitBounds(myRoute.getBounds());
+
+//		var myRoute = L.geoJSON(data, {
+//			filter: function(feature) {
+//				}
+//			},
+
+//			style: function(feature) {
+
+//				return {
+//					color: "#005DAA",
+//					weight: 10,
+//					opacity: 0.8,
+//					dashArray: "10,10"
+//				}
+//			}
+//		}).addTo(map);
+// var myStops = L.geoJSON(data, {
+//	 filter: function(feature) {
+//		 if(feature.geometry.type == "Point") {
+//			 return feature;
+//		 };
+//	 on EachFeature: function(feature, layer){
+//	 layer.bindTooltip(feature.properties['name']);
+// 	}
+
+
+
+	</script>
+
+</body>
+
+</html>
